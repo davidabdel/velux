@@ -29,7 +29,7 @@ const PITCH_OPTIONS = [
 ];
 
 const MATERIAL_OPTIONS = [
-    { id: 'tiled-corrugated', label: 'Tiled / Corrugated Metal', image: '/1770292293641-7w3i5be5356.png' },
+    { id: 'tiled-corrugated', label: 'Tiled / Corrugated Metal', image: '/Untitled design (9).png' },
     { id: 'wide-metal', label: 'Wide-span Metal (Trimdek / Klip-Lok)', image: '/IMG_3050.JPG' },
 ];
 
