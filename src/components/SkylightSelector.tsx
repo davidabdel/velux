@@ -138,8 +138,8 @@ export default function SkylightSelector() {
             p.compatibleSizes.forEach(s => sizeSet.add(s));
         });
 
-        if (selection.trussSpacing) {
-            // Strict Filter based on truss spacing
+        if (selection.trussSpacing && !isFlatRoof) {
+            // Strict Filter based on truss spacing (Pitched only)
             // 600mm -> Only 'C' series
             // 900mm -> Only 'M' series
             // 1200mm -> Only 'S' series
