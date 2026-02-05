@@ -439,7 +439,7 @@ export default function SkylightSelector() {
                 const prices = zzz199.prices as Record<string, number>;
                 if (prices[selection.sizeCode]) {
                     accessoryPrice = prices[selection.sizeCode];
-                    accessoryName = zzz199.name;
+                    accessoryName = `ZZZ 199 ${selection.sizeCode} Blind Tray`;
                 }
             }
         }
