@@ -36,16 +36,16 @@ const MATERIAL_OPTIONS = [
 
 
 const OPENING_OPTIONS = [
-    { id: 'fixed', label: 'Fixed (Non-opening)', description: 'Let in light, keep elements out.' },
-    { id: 'manual', label: 'Manual Opening', description: 'Fresh air with a control rod.' },
-    { id: 'electric', label: 'Electric Opening', description: 'Remote controlled comfort.' },
-    { id: 'solar', label: 'Solar Powered', description: 'Wireless remote control.' },
+    { id: 'fixed', label: 'Fixed (Non-opening)' },
+    { id: 'manual', label: 'Manual Opening' },
+    { id: 'electric', label: 'Electric Opening' },
+    { id: 'solar', label: 'Solar Powered' },
 ];
 
 const TRUSS_OPTIONS = [
-    { id: 600, label: '600mm', description: 'Standard rafter spacing' },
-    { id: 900, label: '900mm', description: 'Wider access' },
-    { id: 1200, label: '1200mm', description: 'Maximum width' },
+    { id: 600, label: '600mm' },
+    { id: 900, label: '900mm' },
+    { id: 1200, label: '1200mm' },
 ];
 
 
@@ -317,11 +317,10 @@ export default function SkylightSelector() {
                 <button
                     key={opt.id}
                     onClick={() => handleOpeningSelect(opt.id)}
-                    className="p-6 bg-white border border-border rounded-xl hover:border-primary/50 transition-all text-left flex flex-col justify-between h-40 group"
+                    className="p-6 bg-white border border-border rounded-xl hover:border-primary/50 transition-all text-left flex flex-col justify-center h-32 group"
                 >
                     <div>
                         <h3 className="text-lg font-medium group-hover:text-primary transition-colors">{opt.label}</h3>
-                        <p className="text-muted-foreground text-sm mt-2">{opt.description}</p>
                     </div>
                 </button>
             ))}
@@ -337,7 +336,6 @@ export default function SkylightSelector() {
                     className="p-8 bg-white border border-border rounded-xl hover:border-primary/50 transition-all flex flex-col items-center justify-center gap-4 group"
                 >
                     <div className="text-3xl font-bold text-primary group-hover:scale-110 transition-transform">{opt.id}mm</div>
-                    <div className="text-sm text-muted-foreground">{opt.description}</div>
                 </button>
             ))}
         </div>
