@@ -4,6 +4,8 @@ import { PRODUCTS, PITCHED_SIZES, FLAT_SIZES, FLASHINGS, BLINDS, ACCESSORIES } f
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Check, RotateCcw, ArrowLeft } from 'lucide-react';
+import html2canvas from 'html2canvas';
+import jsPDF from 'jspdf';
 
 type StepId = 'pitch' | 'material' | 'opening' | 'truss' | 'size' | 'results' | 'blinds' | 'addon' | 'summary';
 
@@ -27,8 +29,8 @@ const PITCH_OPTIONS = [
 ];
 
 const MATERIAL_OPTIONS = [
-    { id: 'tiled-corrugated', label: 'Tiled / Corrugated Metal', icon: '🧱' },
-    { id: 'wide-metal', label: 'Wide-span Metal (Trimdek / Klip-Lok)', icon: '🏗️' },
+    { id: 'tiled-corrugated', label: 'Tiled / Corrugated Metal', image: '/IMG_3049.JPG' },
+    { id: 'wide-metal', label: 'Wide-span Metal (Trimdek / Klip-Lok)', image: '/IMG_3050.JPG' },
 ];
 
 
@@ -244,6 +246,37 @@ export default function SkylightSelector() {
         nextStep('summary');
     };
 
+    const handleExportPDF = async () => {
+        const element = document.getElementById('summary-card');
+        if (!element) return;
+
+        try {
+            const canvas = await html2canvas(element, {
+                scale: 2, // Higher resolution
+                useCORS: true,
+                backgroundColor: '#ffffff'
+            });
+
+            const imgData = canvas.toDataURL('image/png');
+            const pdf = new jsPDF({
+                orientation: 'portrait',
+                unit: 'mm',
+                format: 'a4'
+            });
+
+            const imgProps = pdf.getImageProperties(imgData);
+            const pdfWidth = pdf.internal.pageSize.getWidth();
+            const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
+
+            pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
+            pdf.save('velux-skylight-selection.pdf');
+        } catch (error) {
+            console.error('Error generating PDF:', error);
+            // Fallback to print if PDF generation fails
+            window.print();
+        }
+    };
+
     // ----------------------------------------------------------------------------
     // RENDER STEPS
     // ----------------------------------------------------------------------------
@@ -271,7 +304,7 @@ export default function SkylightSelector() {
                     onClick={() => handleMaterialSelect(opt.id)}
                     className="flex flex-col items-center justify-center p-8 bg-white border border-border rounded-xl shadow-sm hover:shadow-md hover:border-primary/50 transition-all group"
                 >
-                    <span className="text-4xl mb-4 grayscale group-hover:grayscale-0 transition-all">{opt.icon}</span>
+                    <img src={opt.image} alt={opt.label} className="w-32 h-32 object-contain mb-4" />
                     <span className="text-lg font-medium text-center text-foreground">{opt.label}</span>
                 </button>
             ))}
@@ -355,7 +388,7 @@ export default function SkylightSelector() {
                                     <h3 className="text-xl font-bold">{p.name}</h3>
                                     <p className="text-muted-foreground">Size: {selection.sizeCode} ({sizeObj?.label}mm)</p>
                                     <ul className="mt-2 text-sm space-y-1">
-                                        <li>✅ {p.openingType.toUpperCase()} opening</li>
+                                        <li>✅ {p.openingType === 'fixed' ? 'Fixed' : p.openingType === 'solar' ? 'Solar Powered' : `${p.openingType.charAt(0).toUpperCase() + p.openingType.slice(1)} Opening`}</li>
                                         <li>✅ Compatible with {selection.roofType} roof</li>
                                     </ul>
                                 </div>
@@ -448,7 +481,7 @@ export default function SkylightSelector() {
 
         return (
             <div className="space-y-6">
-                <div className="bg-white p-8 rounded-xl border shadow-sm">
+                <div id="summary-card" className="bg-white p-8 rounded-xl border shadow-sm">
                     <h2 className="text-2xl font-bold mb-6 flex items-center gap-2">
                         <Check className="w-6 h-6 text-green-600" /> Great Selection
                     </h2>
@@ -496,7 +529,7 @@ export default function SkylightSelector() {
                             <p className="text-xs uppercase tracking-wider text-muted-foreground">Total Estimate (RRP)</p>
                             <p className="text-3xl font-bold text-primary">${total}</p>
                         </div>
-                        <Button onClick={() => window.print()}>Export Summary</Button>
+                        <Button onClick={handleExportPDF}>Export Summary</Button>
                     </div>
                 </div>
 
