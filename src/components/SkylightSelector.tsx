@@ -297,10 +297,9 @@ export default function SkylightSelector() {
                     <button
                         key={s.code}
                         onClick={() => handleSizeSelect(s.code)}
-                        className="p-4 bg-white border border-border rounded-lg hover:border-primary transition-all text-center flex flex-col items-center justify-center min-h-[100px]"
+                        className="p-4 bg-white border border-border rounded-lg hover:border-primary transition-all text-center flex flex-col items-center justify-center min-h-[100px] group"
                     >
-                        <span className="text-xl font-bold text-primary">{s.code}</span>
-                        <span className="text-xs text-muted-foreground mt-1">{s.label} mm</span>
+                        <span className="text-xl font-bold text-foreground group-hover:text-primary transition-colors">{s.label} mm</span>
                     </button>
                 ))}
             </div>
@@ -474,7 +473,7 @@ export default function SkylightSelector() {
             case 'material': return 'What is the roof material?';
             case 'opening': return 'How should the skylight open?';
             case 'truss': return 'What is your truss/rafter spacing?';
-            case 'size': return 'Select size constraints';
+            case 'size': return 'Select Skylight Size';
             case 'results': return 'Recommended Skylights';
             case 'blinds': return 'Do you require blinds?';
             case 'summary': return 'Selection Summary';
