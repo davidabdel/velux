@@ -138,18 +138,38 @@ export default function SkylightSelector() {
             p.compatibleSizes.forEach(s => sizeSet.add(s));
         });
 
-        if (selection.trussSpacing && !isFlatRoof) {
-            // Strict Filter based on truss spacing (Pitched only)
-            // 600mm -> Only 'C' series
-            // 900mm -> Only 'M' series
-            // 1200mm -> Only 'S' series
+        if (selection.trussSpacing) {
+            if (isFlatRoof) {
+                // Flat Roof Logic: Filter by Overall Curb Width
+                // 600mm -> 14xx (460mm) and 22xx (665mm) logic roughly, or use code prefix
+                // data.md:
+                // 1430 (460 wide) -> 600 truss (exception)
+                // 22xx (665 wide) -> 600 truss
+                // 30xx (870 wide) -> 900 truss
+                // 34xx (970 wide) -> 900 truss
+                // 46xx (1275 wide) -> 1200 truss
 
-            const allowedPrefix = selection.trussSpacing === 600 ? 'C' :
-                selection.trussSpacing === 900 ? 'M' :
-                    'S';
+                let validPrefixes: string[] = [];
+                if (selection.trussSpacing === 600) validPrefixes = ['14', '22'];
+                else if (selection.trussSpacing === 900) validPrefixes = ['30', '34'];
+                else if (selection.trussSpacing === 1200) validPrefixes = ['46'];
 
-            const restricted = Array.from(sizeSet).filter(code => !code.startsWith(allowedPrefix));
-            restricted.forEach(r => sizeSet.delete(r));
+                const restricted = Array.from(sizeSet).filter(code => !validPrefixes.some(pre => code.startsWith(pre)));
+                restricted.forEach(r => sizeSet.delete(r));
+
+            } else {
+                // Pitched Roof Logic (Existing)
+                // 600mm -> Only 'C' series
+                // 900mm -> Only 'M' series
+                // 1200mm -> Only 'S' series
+
+                const allowedPrefix = selection.trussSpacing === 600 ? 'C' :
+                    selection.trussSpacing === 900 ? 'M' :
+                        'S';
+
+                const restricted = Array.from(sizeSet).filter(code => !code.startsWith(allowedPrefix));
+                restricted.forEach(r => sizeSet.delete(r));
+            }
         }
 
         // Orientation Logic (Pitched only rule from PRD: FCM 2270 / 3072 / 4672 landscape constrained?)
