@@ -226,8 +226,21 @@ export const BLINDS: Blind[] = [
             // Let's use 650 as placeholder or check data.md... data.md says "615–706" for selected sizes.
             // I'll put specific values if I can infer, otherwise generic.
             '1430': 615, '2222': 615, '2230': 615, '2234': 615, '2246': 615, '2270': 706,
-            '3030': 640, '3046': 640, '3055': 640, '3072': 706,
+            '3030': 620, '3046': 627, '3055': 640, '3072': 706,
             '3434': 660, '3446': 660, '4646': 680, '4672': 706
+        }
+    }
+];
+
+export const ACCESSORIES = [
+    {
+        id: 'zzz199',
+        name: 'ZZZ 199 Blind Tray',
+        compatibleModels: ['FCM', 'VCM', 'VCS'],
+        prices: {
+            '1430': 95, '2222': 95, '2230': 95, '2234': 95, '2246': 100, '2270': 110,
+            '3030': 105, '3046': 110, '3055': 115, '3072': 122,
+            '3434': 110, '3446': 115, '4622': 115, '4646': 122, '4672': 122
         }
     }
 ];

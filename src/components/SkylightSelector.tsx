@@ -1,6 +1,6 @@
 import { useState, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { PRODUCTS, PITCHED_SIZES, FLAT_SIZES, FLASHINGS, BLINDS } from '@/data/products';
+import { PRODUCTS, PITCHED_SIZES, FLAT_SIZES, FLASHINGS, BLINDS, ACCESSORIES } from '@/data/products';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Check, RotateCcw, ArrowLeft } from 'lucide-react';
@@ -430,7 +430,21 @@ export default function SkylightSelector() {
             flashingName = 'Custom Curb Flashing Required (Not Included)';
         }
 
-        const total = basePrice + flashingPrice + blindPrice;
+        // Accessory Logic (ZZZ 199 for Flat Roof Blinds)
+        let accessoryPrice = 0;
+        let accessoryName = '';
+        if (isFlatRoof && blind && selection.sizeCode) {
+            const zzz199 = ACCESSORIES.find(a => a.id === 'zzz199');
+            if (zzz199) {
+                const prices = zzz199.prices as Record<string, number>;
+                if (prices[selection.sizeCode]) {
+                    accessoryPrice = prices[selection.sizeCode];
+                    accessoryName = zzz199.name;
+                }
+            }
+        }
+
+        const total = basePrice + flashingPrice + blindPrice + accessoryPrice;
 
         return (
             <div className="space-y-6">
@@ -465,6 +479,12 @@ export default function SkylightSelector() {
                                 <div className="flex justify-between text-sm">
                                     <span>{blind.model} {selection.sizeCode} {blind.name}</span>
                                     <span>${blindPrice}</span>
+                                </div>
+                            )}
+                            {accessoryPrice > 0 && (
+                                <div className="flex justify-between text-sm">
+                                    <span>{accessoryName}</span>
+                                    <span>${accessoryPrice}</span>
                                 </div>
                             )}
                         </div>
