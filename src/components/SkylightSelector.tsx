@@ -359,12 +359,8 @@ export default function SkylightSelector() {
     const handleTrussSelect = (spacing: number | 'unsure') => {
         setSelection({ ...selection, trussSpacing: spacing });
         if (spacing === 'unsure') {
-            // For roof window, unsure -> allow all sizes (or maybe show warning like skylights)
-            if (selection.productCategory === 'roof-window') {
-                nextStep('size');
-            } else {
-                nextStep('results');
-            }
+            // Route to results step to show grouped options by truss spacing
+            nextStep('results');
         } else {
             nextStep('size');
         }
@@ -714,25 +710,44 @@ export default function SkylightSelector() {
                 <div id="filtered-results-list" className="space-y-8 bg-white p-6 rounded-xl">
 
                     {validProducts.map((product) => {
-                        // Group compatible sizes by truss spacing (approximate width logic)
-                        // 600mm truss -> Width ~550mm (C sizes)
-                        // 900mm truss -> Width ~780mm (M sizes)
-                        // 1200mm truss -> Width ~1140mm (S sizes)
+                        // Group compatible sizes by truss spacing
+                        // For Roof Windows: CK=~550mm, MK=~780mm, SK=~1140mm
+                        // For Flat Roof: Check actual width from FLAT_SIZES
+                        //   ~460-665mm width -> 600mm truss
+                        //   ~870-970mm width -> 900mm truss
+                        //   ~1275mm width -> 1200mm truss
 
+                        const sizes600 = product.compatibleSizes.filter(code => {
+                            // Letter-based codes (roof windows)
+                            if (code.startsWith('C') || code.startsWith('CK') || code === '550') return true;
+                            // Numeric codes (flat roof) - check width
+                            if (isFlatRoof) {
+                                const sizeObj = FLAT_SIZES.find(s => s.code === code);
+                                return sizeObj && sizeObj.width <= 665;
+                            }
+                            return false;
+                        });
 
-                        // Standard VELUX codes: C=550, M=780, S=1140.
-                        // Roof Windows: CK=550, MK=780, SK=1140.
-
-                        const sizes600 = product.compatibleSizes.filter(code =>
-                            code.startsWith('C') || code.startsWith('CK') || code === '550'
-                        );
-
-                        const sizes900 = product.compatibleSizes.filter(code =>
-                            code.startsWith('M') || code.startsWith('MK')
-                        );
-                        const sizes1200 = product.compatibleSizes.filter(code =>
-                            code.startsWith('S') || code.startsWith('SK')
-                        );
+                        const sizes900 = product.compatibleSizes.filter(code => {
+                            // Letter-based codes (roof windows)
+                            if (code.startsWith('M') || code.startsWith('MK')) return true;
+                            // Numeric codes (flat roof) - check width
+                            if (isFlatRoof) {
+                                const sizeObj = FLAT_SIZES.find(s => s.code === code);
+                                return sizeObj && sizeObj.width > 665 && sizeObj.width <= 970;
+                            }
+                            return false;
+                        });
+                        const sizes1200 = product.compatibleSizes.filter(code => {
+                            // Letter-based codes (roof windows)
+                            if (code.startsWith('S') || code.startsWith('SK')) return true;
+                            // Numeric codes (flat roof) - check width
+                            if (isFlatRoof) {
+                                const sizeObj = FLAT_SIZES.find(s => s.code === code);
+                                return sizeObj && sizeObj.width > 970;
+                            }
+                            return false;
+                        });
 
                         const renderSizeGroup = (title: string, codes: string[]) => {
                             if (codes.length === 0) return null;
@@ -879,6 +894,20 @@ export default function SkylightSelector() {
         // Filter blinds based on selected product model
         const product = PRODUCTS.find(p => p.id === selection.selectedProduct);
         if (!product) return null;
+
+        // Check if blind tray is available for flat roof products
+        // FCM sizes 1430, 3055, 3072, 4672 have no blind tray, so skip blinds entirely
+        if (isFlatRoof && selection.sizeCode) {
+            const zzz199 = ACCESSORIES.find(a => a.id === 'zzz199');
+            if (zzz199) {
+                const prices = zzz199.prices as unknown as Record<string, number>;
+                if (!prices[selection.sizeCode]) {
+                    // No blind tray available for this size, skip to summary
+                    nextStep('summary');
+                    return null;
+                }
+            }
+        }
 
         // Separate Blinds (Darkening/Translucent) and Accessories (Screens)
         const compatibleItems = BLINDS.filter(b => b.compatibleModels.includes(product.model) && b.prices[selection.sizeCode!]);
@@ -1246,7 +1275,7 @@ export default function SkylightSelector() {
                     </div>
 
                     <div className="flex gap-4 mt-8 no-print">
-                        <Button variant="outline" onClick={handleExportPDF} className="flex-1">
+                        <Button variant="outline" onClick={() => handleExportPDF()} className="flex-1">
                             Export Summary
                         </Button>
                         <Button onClick={() => window.location.reload()} className="flex-1">

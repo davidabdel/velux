@@ -193,7 +193,8 @@ export const PRODUCTS: Product[] = [
             '3030': 1621, '3046': 1760,
             '3434': 1694,
             '4646': 2064
-        }
+        },
+        image: '/VCM-skylight.jpg'
     },
     {
         id: 'vcs',
@@ -208,22 +209,7 @@ export const PRODUCTS: Product[] = [
             '3434': 2899,
             '4622': 2846, '4646': 3119
         },
-        image: '/VCS-skylight.jpg'
-    },
-    {
-        id: 'vcs',
-        model: 'VCS',
-        name: 'Flat Roof Solar (VCS)',
-        roofType: ['flat'],
-        openingType: 'solar',
-        compatibleSizes: ['2222', '2234', '2246', '3030', '3046', '3434', '4622', '4646'],
-        prices: {
-            '2222': 2510, '2234': 2654, '2246': 2828,
-            '3030': 2837, '3046': 2976,
-            '3434': 2899,
-            '4622': 2846, '4646': 3119
-        },
-        image: '/VCS-skylight.jpg'
+        image: '/VCS-skylight.jpg',
     },
     // SUN TUNNELS
     {
@@ -359,9 +345,12 @@ export const ACCESSORIES = [
         name: 'ZZZ 199 Blind Tray',
         compatibleModels: ['FCM', 'VCM', 'VCS'],
         prices: {
-            '1430': 95, '2222': 95, '2230': 95, '2234': 95, '2246': 100, '2270': 110,
-            '3030': 105, '3046': 110, '3055': 115, '3072': 122,
-            '3434': 110, '3446': 115, '4622': 115, '4646': 122, '4672': 122
+            // FCM compatible sizes only (1430, 3055, 3072, 4672 have no blind tray)
+            '2222': 95, '2230': 95, '2234': 95, '2246': 95,
+            '2270': 122,
+            '3030': 98, '3046': 98,
+            '3434': 101, '3446': 101,
+            '4622': 105, '4646': 105
         }
     },
     {
