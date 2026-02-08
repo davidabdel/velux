@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { PRODUCTS, PITCHED_SIZES, FLAT_SIZES, ROOF_WINDOW_SIZES, FLASHINGS, BLINDS, ACCESSORIES } from '@/data/products';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Check, RotateCcw, ArrowLeft, Printer } from 'lucide-react';
+import { Check, ArrowLeft, Printer } from 'lucide-react';
 import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
 
@@ -122,24 +122,7 @@ export default function SkylightSelector() {
         }
     };
 
-    const reset = () => {
-        setStep('product-type');
-        setHistory([]);
-        setSelection({
-            productCategory: null,
-            roofPitch: null,
-            roofMaterial: null,
-            roofType: null,
-            openingType: null,
-            orientation: 'portrait',
-            trussSpacing: null,
-            sizeCode: null,
-            selectedProduct: null,
-            selectedBlind: null,
-            selectedInsectScreen: false,
-            selectedAddon: null,
-        });
-    };
+
 
     // ----------------------------------------------------------------------------
     // FILTER LOGIC
@@ -1111,12 +1094,10 @@ export default function SkylightSelector() {
         const blindPrice = blind ? (blind.prices[sizeCode] || 0) : 0;
 
         let screenPrice = 0;
-        let screenName = '';
         if (selection.selectedInsectScreen) {
             const screenProduct = BLINDS.find(b => b.type === 'accessory' && b.id === 'zil'); // Assuming ZIL is the only screen for now
             if (screenProduct && screenProduct.prices[sizeCode]) {
                 screenPrice = screenProduct.prices[sizeCode];
-                screenName = screenProduct.name;
             }
         }
 
